@@ -1,0 +1,12 @@
+# Dados e análise
+yfinance>=0.2.36
+pandas>=2.0.0
+numpy>=1.24.0
+requests>=2.31.0
+
+# Machine Learning
+scikit-learn>=1.3.0
+joblib>=1.3.0
+
+# Alpaca
+alpaca-trade-api>=3.0.0

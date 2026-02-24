@@ -1,0 +1,15 @@
+services:
+  - type: worker
+    name: infrainvestor-bot
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: python Wallor.py
+    envVars:
+      - key: ALPACA_API_KEY
+        value: PKRVRMJDTFDT4T2FRY2Z6XPL6W
+      - key: ALPACA_API_SECRET
+        value: 51TfgVxP56qcC3CNLDRx1gGbLyQrP2s5HZnVt4AGwBzi
+      - key: TELEGRAM_TOKEN
+        value: SEU_TOKEN_AQUI
+      - key: TELEGRAM_CHAT_ID
+        value: SEU_CHAT_ID_AQUI
