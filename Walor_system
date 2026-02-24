@@ -1,6 +1,0 @@
-git init
-git add bot.py requirements.txt render.yaml .gitignore instalar.sh
-git commit -m "InfraInvestor Bot v3"
-git branch -M main
-git remote add origin https://github.com/SEU_USUARIO/infrainvestor-bot.git
-git push -u origin main
