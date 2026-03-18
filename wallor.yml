@@ -1,0 +1,83 @@
+name: Wallor Bot
+
+on:
+  # Roda a cada hora, todos os dias
+  # Horário de Brasília = UTC-3
+  # Mercado EUA: 10h-17h BRT = 13h-20h UTC
+  schedule:
+    - cron: '0 13-20 * * 1-5'   # seg-sex, 10h-17h BRT (mercado aberto)
+    - cron: '0 0 * * *'          # meia-noite UTC = 21h BRT (relatório diário)
+
+  # Permite rodar manualmente pelo celular
+  workflow_dispatch:
+    inputs:
+      modo:
+        description: 'Modo de execução'
+        required: false
+        default: 'ciclo'
+        type: choice
+        options:
+          - ciclo
+          - backtest
+          - radar
+
+jobs:
+  rodar-wallor:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25  # encerra se travar
+
+    steps:
+      # 1. Baixa o código
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # 2. Restaura carteira.json e modelo_ml.pkl do cache
+      # (preserva o estado entre execuções — essencial para o ML aprender)
+      - name: Restaurar estado persistido
+        uses: actions/cache@v4
+        with:
+          path: |
+            carteira.json
+            modelo_ml.pkl
+          key: wallor-estado-${{ runner.os }}
+          restore-keys: |
+            wallor-estado-
+
+      # 3. Configura Python
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      # 4. Instala dependências
+      - name: Instalar dependências
+        run: pip install -r requirements.txt
+
+      # 5. Roda o ciclo único do bot
+      - name: Executar ciclo Wallor
+        env:
+          ALPACA_API_KEY:    ${{ secrets.ALPACA_API_KEY }}
+          ALPACA_API_SECRET: ${{ secrets.ALPACA_API_SECRET }}
+          TELEGRAM_TOKEN:    ${{ secrets.TELEGRAM_TOKEN }}
+          TELEGRAM_CHAT_ID:  ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: python bot.py --uma-vez
+
+      # 6. Salva carteira.json e modelo_ml.pkl no cache
+      # (próxima execução vai continuar de onde parou)
+      - name: Salvar estado persistido
+        uses: actions/cache@v4
+        with:
+          path: |
+            carteira.json
+            modelo_ml.pkl
+          key: wallor-estado-${{ runner.os }}
+
+      # 7. Salva os logs como artefato (consulta pelo celular se precisar)
+      - name: Salvar logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: wallor-logs-${{ github.run_number }}
+          path: infra_investor.log
+          retention-days: 7

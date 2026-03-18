@@ -1,0 +1,43 @@
+# Ambiente
+.env
+.env.local
+.env.production
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.egg-info/
+*.egg
+*.whl
+venv/
+.venv/
+
+# Dependências
+node_modules/
+vendor/
+
+# Logs
+*.log
+logs/
+
+# Sistema
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Build
+dist/
+build/
+*.exe
+
+# Dados gerados pelo bot
+carteira.json
+modelo_ml.pkl
+backtest_resultados/
+infra_investor.log
